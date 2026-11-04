@@ -11,3 +11,4 @@ kaboomCtx.loadSprite("spritesheet", "./spritesheet.png", {
     "walk-up": { from: 1014, to: 1017, loop: true, speed: 8 },
   },
 });
+kaboomCtx.loadSprite("map","./assets/images/map.png")
