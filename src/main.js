@@ -38,10 +38,32 @@ kaboomCtx.scene("main", () => {
     {
       speed:250,
       direction:"down",
-      isInDialogue:"false "
+      isInDialogue:false 
     },
     "player",
   ]);
+
+  for (const layer of layers) {
+    const boundaries = layers.find((l) => l.name === "boundaries");
+    if (layer.name ===  "boundaries") {
+      for (const boundary of boundaries?.objects ?? []) {
+        map.add([
+          kaboomCtx.area({
+            shape: new kaboomCtx.Rect(kaboomCtx.vec2(0),boundary.width,boundary.height)
+          }),
+        kaboomCtx.body({isStatic:true}),
+        kaboomCtx.pos(boundary.x,boundary.y),
+        boundary.name
+        ])
+        if(boundary.name){
+          player.onCollide(boundary.name,()=>{
+            player.isInDialogue = true;
+            //TODO
+          })
+        }
+      }
+    }
+  }
   //....
 });
 kaboomCtx.go("main")
