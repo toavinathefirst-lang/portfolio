@@ -3,6 +3,7 @@ import spritesheetUrl from "./core/spritesheet.png";
 import mapUrl from "./assets/images/map.png";
 import MAPDATA from "./core/map.json"
 import { kaboomCtx } from "./core/kaboomCTX";
+import { SCALEFACTOR } from './core/constants';
 /** @type {import("./core/mapTypes").Layer[]} */
 const layers = /** @type {any} */ (MAPDATA).layers;
 kaboomCtx.loadSprite("spritesheet", spritesheetUrl, {
@@ -22,7 +23,7 @@ kaboomCtx.setBackground(kaboomCtx.Color.fromHex("311047"))
 kaboomCtx.scene("main", () => {
   const layers = MAPDATA.layers;
   const map = kaboomCtx.make([
-    kaboomCtx.sprite("map")
+    kaboomCtx.sprite("map"),kaboomCtx.pos(0),kaboomCtx.scale(SCALEFACTOR)
   ])
   //....
 });
