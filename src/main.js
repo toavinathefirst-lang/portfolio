@@ -25,6 +25,23 @@ kaboomCtx.scene("main", () => {
   const map = kaboomCtx.make([
     kaboomCtx.sprite("map"),kaboomCtx.pos(0),kaboomCtx.scale(SCALEFACTOR)
   ])
+  const player = kaboomCtx.make([
+    kaboomCtx.sprite("spritesheet",{
+      anim:"idle-down"
+    }),kaboomCtx.area({
+      shape: new kaboomCtx.Rect(kaboomCtx.vec2(0 , 3),10,10)
+    }),
+    kaboomCtx.body(),
+    kaboomCtx.anchor("center"),
+    kaboomCtx.pos(),
+    kaboomCtx.scale(SCALEFACTOR),
+    {
+      speed:250,
+      direction:"down",
+      isInDialogue:"false "
+    },
+    "player",
+  ]);
   //....
 });
 kaboomCtx.go("main")
