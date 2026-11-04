@@ -1,5 +1,11 @@
+import './style.css'
+import spritesheetUrl from "./core/spritesheet.png";
+import mapUrl from "./assets/images/map.png";
+import MAPDATA from "./core/map.json"
 import { kaboomCtx } from "./core/kaboomCTX";
-kaboomCtx.loadSprite("spritesheet", "./spritesheet.png", {
+/** @type {import("./core/mapTypes").Layer[]} */
+const layers = /** @type {any} */ (MAPDATA).layers;
+kaboomCtx.loadSprite("spritesheet", spritesheetUrl, {
   sliceX: 39,
   sliceY: 31,
   anims: {
@@ -11,4 +17,13 @@ kaboomCtx.loadSprite("spritesheet", "./spritesheet.png", {
     "walk-up": { from: 1014, to: 1017, loop: true, speed: 8 },
   },
 });
-kaboomCtx.loadSprite("map","./assets/images/map.png")
+kaboomCtx.loadSprite("map",mapUrl)
+kaboomCtx.setBackground(kaboomCtx.Color.fromHex("311047"))
+kaboomCtx.scene("main", () => {
+  const layers = MAPDATA.layers;
+  const map = kaboomCtx.make([
+    kaboomCtx.sprite("map")
+  ])
+  //....
+});
+kaboomCtx.go("main")
