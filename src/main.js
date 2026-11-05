@@ -93,6 +93,10 @@ kaboomCtx.scene("main", () => {
       }
     }
   }
+
+  kaboomCtx.onUpdate(()=>{
+    kaboomCtx.camPos(player.pos.x,player.pos.y +100)
+  })
 });
 
 kaboomCtx.go("main");
