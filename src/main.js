@@ -108,7 +108,54 @@ kaboomCtx.scene("main", () => {
     if(mouseBtn !== "left" || player.isInDialogue) return 
     const worldMousePos = kaboomCtx.toWorld(kaboomCtx.mousePos())
     player.moveTo(worldMousePos,player.speed)
+
+    const mouseAngle = player.pos.angle(worldMousePos)
+
+    const LOWER_BOUND = 50
+    const UPPER_BOUND = 125
+
+    //up
+    if(
+      mouseAngle > LOWER_BOUND && 
+      mouseAngle < UPPER_BOUND &&
+      player.curAnim() !== "walk-up"
+    ){
+      player.play("walk-up")
+      player.direction="up"
+      return
+    }
+
+    //down
+     if(
+      mouseAngle < -LOWER_BOUND && 
+      mouseAngle > -UPPER_BOUND &&
+      player.curAnim() !== "walk-down"
+    ){
+      player.play("walk-down")
+      player.direction="down"
+      return
+    }
+
+    //left
+    if(
+        Math.abs(mouseAngle) < LOWER_BOUND
+    ){
+      player.flipX = true
+      if(player.curAnim() !== "walk-side") player.play("walk-side")
+      player.direction="left"
+      return
+    }
+
+     if(
+        Math.abs(mouseAngle) > UPPER_BOUND
+    ){
+      player.flipX = false
+      if(player.curAnim() !== "walk-side") player.play("walk-side")
+      player.direction="right"
+      return
+    }
   })
+  
 });
 
 kaboomCtx.go("main");
