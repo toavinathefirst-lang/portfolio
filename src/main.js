@@ -95,7 +95,15 @@ kaboomCtx.scene("main", () => {
   }
 
   kaboomCtx.onUpdate(()=>{
-    kaboomCtx.camPos(player.pos.x,player.pos.y +100)
+    kaboomCtx.camPos(player.pos.x,player.pos.y +100) 
+  })
+
+
+  //movement
+  kaboomCtx.onMouseDown((mouseBtn)=>{
+    if(mouseBtn !== "left" || player.isInDialogue) return 
+    const worldMousePos = kaboomCtx.toWorld(kaboomCtx.mousePos())
+    player.moveTo(worldMousePos,player.speed)
   })
 });
 
