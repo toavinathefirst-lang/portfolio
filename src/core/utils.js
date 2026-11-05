@@ -44,4 +44,18 @@ export function displayDialogue(text, onDisplayEnd) {
         closeButton.removeEventListener("click",onCloseButtonClick)
     }
     closeButton.addEventListener("click",onCloseButtonClick)
+
+    
+}
+/**
+ * @param {import("kaboom").KaboomCtx} k 
+ */
+export function setCamScale(k){
+    const resizeFactor =  k.width()/ k.height()
+    if(resizeFactor<1){
+        k.camScale(k.vec2(1))
+    }else{
+        return ;
+    }
+    k.camScale(k.vec2(1.5))
 }

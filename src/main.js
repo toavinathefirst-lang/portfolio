@@ -4,7 +4,7 @@ import mapUrl from "./assets/images/map.png";
 import MAPDATA from "./core/map.json";
 import { kaboomCtx } from "./core/kaboomCTX";
 import { SCALEFACTOR } from "./core/constants";
-import { displayDialogue } from "./core/utils";
+import { displayDialogue, setCamScale } from "./core/utils";
 
 /** @type {import("./core/mapTypes").Layer[]} */
 const layers = /** @type {any} */ (MAPDATA).layers;
@@ -94,6 +94,10 @@ kaboomCtx.scene("main", () => {
     }
   }
 
+  setCamScale(kaboomCtx)
+  kaboomCtx.onResize(()=>{
+     setCamScale(kaboomCtx)
+  })
   kaboomCtx.onUpdate(()=>{
     kaboomCtx.camPos(player.pos.x,player.pos.y +100) 
   })
