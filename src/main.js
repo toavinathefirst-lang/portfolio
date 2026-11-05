@@ -5,6 +5,7 @@ import MAPDATA from "./core/map.json";
 import { kaboomCtx } from "./core/kaboomCTX";
 import { dialogueData, SCALEFACTOR } from "./core/constants";
 import { displayDialogue, setCamScale } from "./core/utils";
+import { loadSounds, setupBackgroundMusic, playObjectSound } from "./core/audio";
 
 /** @type {import("./core/mapTypes").Layer[]} */
 const layers = /** @type {any} */ (MAPDATA).layers;
@@ -23,9 +24,12 @@ kaboomCtx.loadSprite("spritesheet", spritesheetUrl, {
 });
 
 kaboomCtx.loadSprite("map", mapUrl);
+loadSounds();
 kaboomCtx.setBackground(kaboomCtx.Color.fromHex("311047"));
 
 kaboomCtx.scene("main", () => {
+  setupBackgroundMusic();
+
   const map = kaboomCtx.add([
     kaboomCtx.sprite("map"),
     kaboomCtx.pos(0),
@@ -43,14 +47,13 @@ kaboomCtx.scene("main", () => {
     kaboomCtx.scale(SCALEFACTOR),
     {
       speed: 250,
-      direction: "down",
+      direction: /** @type {"up" | "down" | "left" | "right"} */ ("down"),
       isInDialogue: false,
     },
     "player",
   ]);
 
   for (const layer of layers) {
-    
     if (layer.type !== "objectgroup") continue;
 
     if (layer.name === "boundaries") {
@@ -68,10 +71,15 @@ kaboomCtx.scene("main", () => {
           boundary.name,
         ]);
 
-        if (boundary.name) {
-          player.onCollide(boundary.name, () => {
+        const name = boundary.name;
+        const text = name ? dialogueData[name] : undefined;
+
+        if (name && text) {
+          player.onCollide(name, () => {
+            if (player.isInDialogue) return;
             player.isInDialogue = true;
-            displayDialogue(dialogueData[boundary.name], () => {
+            playObjectSound(name);
+            displayDialogue(text, () => {
               player.isInDialogue = false;
             });
           });
@@ -82,94 +90,65 @@ kaboomCtx.scene("main", () => {
 
     if (layer.name === "spawnpoints") {
       for (const entity of layer.objects) {
-        if(entity.name==="player"){
+        if (entity.name === "player") {
           player.pos = kaboomCtx.vec2(
-            (map.pos.x +entity.x) *SCALEFACTOR,
+            (map.pos.x + entity.x) * SCALEFACTOR,
             (map.pos.y + entity.y) * SCALEFACTOR
           );
-          kaboomCtx.add(player)
-          continue
+          kaboomCtx.add(player);
         }
       }
     }
   }
 
-  setCamScale(kaboomCtx)
-  kaboomCtx.onResize(()=>{
-     setCamScale(kaboomCtx)
-  })
-  kaboomCtx.onUpdate(()=>{
-    kaboomCtx.camPos(player.pos.x,player.pos.y +100) 
-  })
+  setCamScale(kaboomCtx);
+  kaboomCtx.onResize(() => setCamScale(kaboomCtx));
+  kaboomCtx.onUpdate(() => {
+    kaboomCtx.camPos(player.pos.x, player.pos.y + 100);
+  });
 
+  // Déplacement
+  kaboomCtx.onMouseDown((mouseBtn) => {
+    if (mouseBtn !== "left" || player.isInDialogue) return;
 
-  //movement
-  kaboomCtx.onMouseDown((mouseBtn)=>{
-    if(mouseBtn !== "left" || player.isInDialogue) return 
-    const worldMousePos = kaboomCtx.toWorld(kaboomCtx.mousePos())
-    player.moveTo(worldMousePos,player.speed)
+    const worldMousePos = kaboomCtx.toWorld(kaboomCtx.mousePos());
+    player.moveTo(worldMousePos, player.speed);
 
-    const mouseAngle = player.pos.angle(worldMousePos)
+    const mouseAngle = player.pos.angle(worldMousePos);
+    const LOWER_BOUND = 50;
+    const UPPER_BOUND = 125;
 
-    const LOWER_BOUND = 50
-    const UPPER_BOUND = 125
-
-    //up
-    if(
-      mouseAngle > LOWER_BOUND && 
-      mouseAngle < UPPER_BOUND &&
-      player.curAnim() !== "walk-up"
-    ){
-      player.play("walk-up")
-      player.direction="up"
-      return
+    if (mouseAngle > LOWER_BOUND && mouseAngle < UPPER_BOUND) {
+      if (player.curAnim() !== "walk-up") player.play("walk-up");
+      player.direction = "up";
+      return;
     }
 
-    //down
-     if(
-      mouseAngle < -LOWER_BOUND && 
-      mouseAngle > -UPPER_BOUND &&
-      player.curAnim() !== "walk-down"
-    ){
-      player.play("walk-down")
-      player.direction="down"
-      return
+    if (mouseAngle < -LOWER_BOUND && mouseAngle > -UPPER_BOUND) {
+      if (player.curAnim() !== "walk-down") player.play("walk-down");
+      player.direction = "down";
+      return;
     }
 
-    //left
-    if(
-        Math.abs(mouseAngle) < LOWER_BOUND
-    ){
-      player.flipX = true
-      if(player.curAnim() !== "walk-side") player.play("walk-side")
-      player.direction="left"
-      return
+    if (Math.abs(mouseAngle) < LOWER_BOUND) {
+      player.flipX = true;
+      if (player.curAnim() !== "walk-side") player.play("walk-side");
+      player.direction = "left";
+      return;
     }
 
-     if(
-        Math.abs(mouseAngle) > UPPER_BOUND
-    ){
-      player.flipX = false
-      if(player.curAnim() !== "walk-side") player.play("walk-side")
-      player.direction="right"
-      return
-    }
-  })
+    player.flipX = false;
+    if (player.curAnim() !== "walk-side") player.play("walk-side");
+    player.direction = "right";
+  });
+
   function stopAnims() {
-    if (player.direction === "down") {
-      player.play("idle-down");
-      return;
-    }
-    if (player.direction === "up") {
-      player.play("idle-up");
-      return;
-    }
-
+    if (player.direction === "down") return player.play("idle-down");
+    if (player.direction === "up") return player.play("idle-up");
     player.play("idle-side");
   }
 
-  kaboomCtx.onMouseRelease(stopAnims)
-
+  kaboomCtx.onMouseRelease(stopAnims);
 });
 
 kaboomCtx.go("main");

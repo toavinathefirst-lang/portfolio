@@ -31,7 +31,7 @@ export const dialogueData = {
   projects: `This open book on the table shows my academic side. I study at the ISPM in Madagascar,
     with a strong focus on mathematics.
     Achievements: winner of the Orange Summer Challenge 2025 and participant in Science Hack Day 2023.
-    This portfolio is built with Kaboom.js, and the textbox you're reading is rendered with HTML/CSS.`,
+    This portfolio is built with Kaboom.js.`,
 
   library: `These are my books. My favorites are the MBA series on accounting by Collins Devanna and the MBA finance book,
     and of course <em>The Art of Computer Programming</em> by Donald Knuth.
