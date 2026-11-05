@@ -3,7 +3,7 @@ import spritesheetUrl from "./core/spritesheet.png";
 import mapUrl from "./assets/images/map.png";
 import MAPDATA from "./core/map.json";
 import { kaboomCtx } from "./core/kaboomCTX";
-import { SCALEFACTOR } from "./core/constants";
+import { dialogueData, SCALEFACTOR } from "./core/constants";
 import { displayDialogue, setCamScale } from "./core/utils";
 
 /** @type {import("./core/mapTypes").Layer[]} */
@@ -71,7 +71,7 @@ kaboomCtx.scene("main", () => {
         if (boundary.name) {
           player.onCollide(boundary.name, () => {
             player.isInDialogue = true;
-            displayDialogue("TODO", () => {
+            displayDialogue(dialogueData[boundary.name], () => {
               player.isInDialogue = false;
             });
           });
